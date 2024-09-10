@@ -1,9 +1,10 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
 }
+
 .loader {
     display: none;
     height: 14px;
@@ -12,28 +13,39 @@
     background-size: 60% 100%;
     animation: l16 3s infinite;
 }
+
 @keyframes l16 {
     0%   {background-position:-150% 0,-150% 0}
     66%  {background-position: 250% 0,-150% 0}
     100% {background-position: 250% 0, 250% 0}
 }
-.rounded{
+.rounded {
     border-radius: 10px;
     margin-bottom: 10px;
     background-color: rgb(250, 250, 250, 0.5);
     padding: 5px;
 }
-.darcBg{
+
+.darcBg {
     border-radius: 10px;
     padding: 5px;
     background-color: rgb(200, 200, 200, 0.8);
 }
-.themeChage{
+
+.themeChage {
    width: 50px; 
    height: 50px;
+   transition: 0.5 ease;
    cursor: pointer;
 }
-body{
+
+.themeChage.darkTheme {
+    transform: rotate(360deg);
+    filter: invert(100%);
+    transition: 1s;
+}
+
+body {
     min-height: 100vh;
     background-image: url(./img/background.jpg);
     animation: bg-animation 1000s infinite linear;
@@ -57,54 +69,62 @@ body{
         background-position:   top left; 
     }
 }
-header{
+header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-nav button{
+
+nav button {
     padding: 0 10px;
     border: none;
     background-color: transparent;
     font-size: 18px;
     cursor: pointer;
 }
-.active{
+
+.active {
     background-color: orange;
     border-radius: 6px;
 }
 
-.search{
+.search {
     display: flex;
     gap: 10px;
 }
-.search input{
+
+.search input {
     border: none;
     outline: none;
     padding: 10 px;
     flex-grow: 100;
 }
-.search button{
+
+.search button {
     border: none;
     cursor: pointer;
     padding: 5px 16px;
     font-style: 16px;
 }
-.movieTitle{
+
+.movieTitle {
     text-align: center;
     margin-bottom: 10px;
 }
+
 .movie_rounded {
     display: flex;
     flex-direction: column;
 
 }
-.movie{
+
+.movie {
     display: flex;
     gap: 20px;
     margin-bottom: 10px;
 }
-.movieImg{
+
+.movieImg {
     width: 300px;
     background-image: url(./img/film2.jpg);
     background-repeat: no-repeat;
@@ -113,34 +133,86 @@ nav button{
     min-height: 500px;
     border-radius: 10px;
 }
-.movieInfo{
+
+.movieInfo {
     width: 300px;
     flex-grow: 1;
-}
-.desc{
+} 
+
+.desc {
     display: flex;
     background-color: rgb(139, 133, 133, 0.832);
     margin-bottom: 5px;
 }
-.desc div{
+
+.desc div {
    width: 50%; 
-}
-.title{
+} 
+
+.title {
     font-weight: 700;
 }
-.similarMovieTitle{
+
+.similarMovieTitle {
     text-align: center;
     margin-bottom: 10px;
 }
-.similarMovie{
+
+.similarMovie {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 10px;
 }
-.similarMovieCard{
-    background-image: url(./img/film3.jpg);
+
+.similarMovieCard {
+    background-image: url(./img/film1.jpg);
     min-height: 300px;
     background-repeat: no-repeat;
+    background-position: center;
     background-size: cover;
     border-radius: 10px;
+    position: relative;
+} 
+
+.save {
+background-color: rgb(200, 200, 200, 0.8);
+padding: 5px;
+border-radius: 5px;
+width: 40px;
+height: 40px;
+position: absolute;
+top: 10px;
+left: 10px;
+}
+
+.save.saved {
+    filter: invert(1) sepia(1) saturate(10) hue-rotate(-45deg);
+}
+
+.similarMovieText {
+background-color: rgb(200, 200, 200, 0.8);
+padding-top: 10px;
+padding-bottom: 10px;
+text-align: center;
+font-weight: bold;
+position: absolute;
+bottom: 0;
+width: 100%;
+border-radius: 0px 0px 10px 10px;
+}
+
+body {
+    transition: 0.5s;
+}
+
+.dark, .dark button, .dark input {
+    color: white;
+}
+
+.dark .rounded {
+    background-color: rgb(50, 50, 50, 0.5);
+}
+
+.dark .darcBg {
+    background-color:  rgb(10, 10, 10, 0.5); ;
 }
