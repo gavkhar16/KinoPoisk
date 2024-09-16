@@ -1,35 +1,36 @@
-let changeThemeBtn = document.querySelector(".themeChange")
-let body = document.querySelector("body")
+let changeThemeBtn = document.querySelector(".themeChange");
+let body = document.querySelector("body");
 
-changeThemeBtn.addEventListener("click", changeTheme)
+changeThemeBtn.addEventListener("click", changeTheme);
 
 if (localStorage.getItem("theme") === "dark") {
     changeThemeBtn.classList.add("darkTheme");
     body.classList.add("dark");
 }
+
 function changeTheme() {
     if (localStorage.getItem("theme") === "dark") {
-      changeThemeBtn.classList.toggle('darkTheme');
-      body.classList.toggle("dark");
-      localStorage.setItem("theme", "white");
+        changeThemeBtn.classList.toggle("darkTheme");
+        body.classList.toggle("dark");
+        localStorage.setItem("theme", "white");
     } else {
-      changeThemeBtn.classList.toggle('darkTheme');
-      body.classList.toggle("dark");
-      localStorage.setItem("theme", "dark");
+        changeThemeBtn.classList.toggle("darkTheme");
+        body.classList.toggle("dark");
+        localStorage.setItem("theme", "dark");
     }
-  }
-  
-  let searchBtn = document.querySelector(".search button");
-  searchBtn.addEventListener("click", searchMovie);
-  
-  let loader = document.querySelector('.loader');
-  
-  document.addEventListener('keydown', function(event) {
+}
+
+let searchBtn = document.querySelector(".search button");
+searchBtn.addEventListener("click", searchMovie);
+
+let loader = document.querySelector('.loader');
+
+document.addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
-      event.preventDefault();
-      searchMovie();
+        event.preventDefault();
+        searchMovie();
     }
-  });
+});
 
 async function searchMovie() {
     loader.style.display = "block";
@@ -38,7 +39,7 @@ async function searchMovie() {
     console.log(searchText);
 
     let response = await sendRequest("http://www.omdbapi.com/", "GET", {
-        "apikey": "74920bef",
+        "apikey": "36b4137d",
         "t": searchText
     });
 
@@ -54,7 +55,11 @@ async function searchMovie() {
         movieTitle.innerHTML = response.Title;
 
         let movieImg = document.querySelector(".movieImg");
-        movieImg.style.backgroundImage = `url(${response.Poster})`;
+        if (response.Poster !== "N/A") {
+            movieImg.style.backgroundImage = `url(${response.Poster})`;
+        } else {
+            movieImg.style.backgroundImage = ''; // Очистить, если постера нет
+        }
 
         let detailsList = ["Language", "Actors", "Country", "Genre", "Released", "Runtime", "imdbRating"];
         let movieInfo = document.querySelector(".movieInfo");
@@ -67,33 +72,105 @@ async function searchMovie() {
                 <div class="value">${response[param]}</div>
             </div>`;
             movieInfo.innerHTML += desc;
+            searchSimilarMovies(searchText)
         }
 
         loader.style.display = "none";
+
+
+        // Вызов функции для поиска похожих фильмов
+        await searchSimilarMovies(response.Title);
     }
 }
 
 
+
+
+
 async function sendRequest(url, method, data) {
-    if (method == "POST") {
-        let response = await fetch(url, {
-            method: "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
+    try {
+        if (method == "POST") {
+            let response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
 
-        response = JSON.parse(response)
-        return response
-    } else if (method == "GET") {
-        url = url + "?" + new URLSearchParams(data)
-        let response = await fetch(url, {
-            method: "GET"
-        })
+            response = await response.json(); // Исправление
+            return response;
+        } else if (method == "GET") {
+            url = url + "?" + new URLSearchParams(data);
+            let response = await fetch(url, {
+                method: "GET"
+            });
 
-        response = await response.json()
-        return response
+            if (!response.ok) throw new Error("Network response was not ok");
+
+            response = await response.json();
+            return response;
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Ошибка запроса к API.");
     }
+}
+
+async function searchSimilarMovies(title) {
+    let similarMovies = await sendRequest("http://www.omdbapi.com/", "GET", {
+        "apikey": "36b4137d",
+        "s": title
+    })
+    if (similarMovies.Response == "False"){
+        documet.querySelector(".similarMovieTitle h2").style.display="none"
+        document.querySelector(".similarMovies").style.display="none"
+    }
+    else{
+        document.querySelector(".similarMovieTitle h2").innerHTML=`Похожих фильмов: ${similarMovies.totalResults}`
+        showSimilarMovies(similarMovies.Search)
+        console.log(similarMovies);
+    }
+}
+
+    
+function showSimilarMovies (movies){
+    let similarMoviesContainer = document.querySelector(".similarMovies")
+    let similarMoviesTitle = document.querySelector(".similarMovieTitle")
+    similarMoviesContainer.innerHTML=""
+
+    movies.forEach(movie => {
+        similarMoviesContainer.innerHTML += `<div class="similarMovieCard" style="background-image:url(${movie.Poster})">
+       <div class= "favStar" data-title="${movie.Title}" data-poster="${movie.Poster}" data-imdbID="${movie.imdbID}"></div>
+        <div class="similarMovieText">${movie.Title}</div>
+        </div>` 
+     });
+     
+    similarMoviesContainer.style.display="grid";
+    similarMoviesTitle.style.display="block";
+    actiactivateFavBtns()
+}
+
+function actiactivateFavBtns(){
+    document.querySelectorAll(".favStar").forEach((elem)=>{
+        elem.addEventListener("click", addToFav)
+    })
+}
+
+
+
+function addToFav (){
+    let favBtn = event.target;
+    let title = favBtn.getAttribute("data-title");
+    let poster = favBtn.getAttribute("data-poster");
+    let imdbID = favBtn.getAttribute ("data-imdbID");
+    console.log(title,poster,imdbID);
+}
+let favs = localStorage.getItem("favs")
+if (!favs){
+    favs = [];
+    localStorage.setItem("favs", JSON.stringify(favs));
+}else{
+    favs = JSON.parse(favs);
 }
