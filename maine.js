@@ -192,7 +192,7 @@ if (!favs){
 }
 function showFavs(){
         let similarMoviesContainer = document.querySelector(".similarMovies");
-        let similarMoviesTitle = document.querySelector(".similarMovieTitle h2");
+        let similarMoviesTitle = document.querySelector(".similarMovieTitle");
         similarMoviesContainer.innerHTML="";
         similarMoviesTitle.innerHTML =  `Фильмы в избранном: ${favs.length}`
     
@@ -203,9 +203,9 @@ function showFavs(){
             <div class="similarMovieText">${movie.title}</div>
             </div>`; 
          });
-         
+         similarMoviesTitle.style.display="block";
         similarMoviesContainer.style.display="grid";
-        similarMoviesTitle.style.display="block";
+
         actiactivateFavBtns();
     
 }
